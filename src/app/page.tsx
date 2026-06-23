@@ -1,74 +1,96 @@
-'use client'; // This allows us to use onClick events
+import Link from 'next/link';
 
-import { ArrowRight, Download, Sparkles } from 'lucide-react';
-import { usePrivy } from '@privy-io/react-auth';
-import { useRouter } from 'next/navigation';
-
-export default function Home() {
-  const { login, ready, authenticated } = usePrivy();
-  const router = useRouter();
-
-  const handleTradeClick = () => {
-    if (authenticated) {
-      // If already logged in, go to the trading arena (we will build this next)
-      router.push('/trade');
-    } else {
-      // If not logged in, pop open the Privy login modal
-      login();
-    }
-  };
+export default function LandingPage() {
+  // Mock data for the marquee (will rotate seamlessly)
+  const tokens = [
+    { symbol: 'SOL', price: '$143.20', change: '+2.4%' },
+    { symbol: 'BONK', price: '$0.000021', change: '+14.2%' },
+    { symbol: 'WIF', price: '$2.85', change: '-1.2%' },
+    { symbol: 'POPCAT', price: '$0.45', change: '+8.7%' },
+    { symbol: 'BOME', price: '$0.012', change: '+5.1%' },
+    { symbol: 'JUP', price: '$0.98', change: '+1.1%' },
+    { symbol: 'CHAD', price: '$0.05', change: '+42.0%' },
+  ];
 
   return (
-    <main className="min-h-screen bg-[#0d0e12] text-white flex flex-col overflow-x-hidden font-sans">
-      
-      {/* Top Ticker */}
-      <div className="w-full bg-[#13141b] border-b border-gray-800 py-3 flex overflow-hidden">
-        <div className="animate-marquee flex gap-12 text-sm font-mono text-green-400 font-bold tracking-widest whitespace-nowrap">
-           <span>🚀 $CHAD +24.5%</span><span>🔥 $PEPE +12.1%</span><span>🐕 $DOGE +4.2%</span><span>💎 $WIF +42.0%</span>
-           <span>🚀 $CHAD +24.5%</span><span>🔥 $PEPE +12.1%</span><span>🐕 $DOGE +4.2%</span><span>💎 $WIF +42.0%</span>
-           <span>🚀 $CHAD +24.5%</span><span>🔥 $PEPE +12.1%</span><span>🐕 $DOGE +4.2%</span><span>💎 $WIF +42.0%</span>
+    <div className="min-h-screen bg-[#0a0a0b] text-white flex flex-col relative overflow-hidden">
+      {/* GPU-Accelerated CSS Marquee */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+      `}} />
+
+      {/* TOP MARQUEE (Requirement 4) */}
+      <div className="w-full bg-[#13141b] border-b border-gray-800 py-3 overflow-hidden whitespace-nowrap flex">
+        <div className="flex w-[200%] animate-marquee hover:[animation-play-state:paused]">
+          {[...tokens, ...tokens].map((t, i) => (
+            <Link href="/trade" key={i} className="flex items-center gap-2 mx-8 hover:opacity-75 transition-opacity cursor-pointer">
+              <span className="font-bold">{t.symbol}</span>
+              <span className="text-gray-400 font-mono">{t.price}</span>
+              <span className={t.change.startsWith('+') ? 'text-green-400 font-mono' : 'text-red-400 font-mono'}>{t.change}</span>
+            </Link>
+          ))}
         </div>
       </div>
 
-      {/* Hero Content */}
-      <div className="flex flex-col items-center justify-center flex-1 px-4 text-center max-w-5xl mx-auto w-full z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#676FFF]/10 text-[#676FFF] text-sm font-bold mb-8 border border-[#676FFF]/20">
-          <Sparkles size={16} />
-          <span>THE ONLY SOCIAL-FIRST TRADING APP</span>
+      {/* HERO SECTION */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center z-10">
+        
+        {/* BRANDING (Requirement 1) */}
+        <div className="mb-8 p-8 bg-white/5 rounded-3xl border border-gray-800 shadow-2xl flex flex-col items-center backdrop-blur-sm">
+          {/* Your uploaded Logo! If it's a dark line drawing, the bg-white helps it pop */}
+          <div className="bg-white p-4 rounded-full mb-6">
+             <img src="/light.png" alt="ChadWallet" className="h-24 w-24 object-contain" />
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#676FFF] to-[#ab67ff]">
+            CHADWALLET
+          </h1>
         </div>
+
+        <h2 className="text-3xl md:text-5xl font-bold mb-6 max-w-3xl">
+          The Social-First Crypto Trading Terminal.
+        </h2>
         
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 bg-gradient-to-br from-white via-gray-200 to-gray-600 bg-clip-text text-transparent leading-[1.1]">
-          WHERE TRADERS <br/> BECOME LEGENDS.
-        </h1>
-        
-        <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl leading-relaxed">
-          From memecoins to viral tokens, trade any crypto in seconds. Zero complexity. One click to buy.
+        <p className="text-gray-400 text-lg mb-12 max-w-2xl">
+          Sign in instantly with Apple or Google. Trade any asset on-chain with zero friction. Join the arena.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <button 
-            disabled={!ready}
-            onClick={handleTradeClick}
-            className="flex items-center justify-center gap-3 bg-[#676FFF] hover:bg-[#565cee] disabled:opacity-50 text-white px-10 py-5 rounded-2xl font-black text-lg transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(103,111,255,0.3)]"
-          >
-            {authenticated ? 'Enter Arena' : 'Start Trading'} <ArrowRight size={24} />
-          </button>
+        {/* CALL TO ACTIONS */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
+          {/* Routes to the Privy Auth / Trading Terminal */}
+          <Link href="/trade" className="px-8 py-4 bg-[#676FFF] hover:bg-[#5a61eb] text-white font-bold rounded-full transition-all text-lg shadow-[0_0_20px_rgba(103,111,255,0.4)]">
+            Launch Terminal
+          </Link>
           
-          <button className="flex items-center justify-center gap-3 bg-[#13141b] hover:bg-[#1a1c26] text-white px-10 py-5 rounded-2xl font-bold text-lg border border-gray-800 transition-all">
-            <Download size={24} /> Download App
-          </button>
+          <div className="flex gap-4">
+            {/* MOBILE APP LINKS (Requirement 1b) */}
+            <a href="https://apps.apple.com/us/app/chadwallet/id6757367474" target="_blank" rel="noreferrer" className="px-6 py-4 bg-[#13141b] border border-gray-700 hover:border-gray-500 rounded-full font-semibold transition-all">
+              🍎 App Store
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=xyz.chadwallet.www" target="_blank" rel="noreferrer" className="px-6 py-4 bg-[#13141b] border border-gray-700 hover:border-gray-500 rounded-full font-semibold transition-all">
+              🤖 Google Play
+            </a>
+          </div>
+        </div>
+      </main>
+
+      {/* BOTTOM MARQUEE (Requirement 4) */}
+      <div className="w-full bg-[#13141b] border-t border-gray-800 py-3 overflow-hidden whitespace-nowrap flex absolute bottom-0">
+        <div className="flex w-[200%] animate-marquee hover:[animation-play-state:paused]" style={{ animationDirection: 'reverse' }}>
+          {[...tokens, ...tokens].map((t, i) => (
+             <Link href="/trade" key={i} className="flex items-center gap-2 mx-8 hover:opacity-75 transition-opacity cursor-pointer">
+             <span className="font-bold">{t.symbol}</span>
+             <span className="text-gray-400 font-mono">{t.price}</span>
+             <span className={t.change.startsWith('+') ? 'text-green-400 font-mono' : 'text-red-400 font-mono'}>{t.change}</span>
+           </Link>
+          ))}
         </div>
       </div>
-      
-      {/* Bottom Ticker */}
-      <div className="w-full bg-[#13141b] border-t border-gray-800 py-3 flex overflow-hidden">
-        <div className="animate-marquee flex gap-12 text-sm font-mono text-gray-400 whitespace-nowrap">
-           <span>💰 0x4a... bought 10M $CHAD</span><span>🚨 Whale alert: 50K SOL transferred</span><span>💰 0x8b... bought 5M $WIF</span>
-           <span>💰 0x4a... bought 10M $CHAD</span><span>🚨 Whale alert: 50K SOL transferred</span><span>💰 0x8b... bought 5M $WIF</span>
-           <span>💰 0x4a... bought 10M $CHAD</span><span>🚨 Whale alert: 50K SOL transferred</span><span>💰 0x8b... bought 5M $WIF</span>
-        </div>
-      </div>
-      
-    </main>
+    </div>
   );
 }

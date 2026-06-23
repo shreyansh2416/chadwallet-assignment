@@ -12,7 +12,6 @@ export default function TrendingWidget() {
         const res = await fetch('/api/trending');
         const json = await res.json();
         
-        // We found the exact path!
         if (json.success && json.data && json.data.tokens) {
           setTokens(json.data.tokens.slice(0, 5));
         }

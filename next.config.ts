@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
-  reactStrictMode: false, // Set this to false
-}
+const nextConfig: NextConfig = {
+  experimental: {
+    // This forces the computer to only use 1 brain cell at a time and stops multi-tasking!
+    cpus: 1,
+    workerThreads: false,
+  },
+};
 
-module.exports = nextConfig
 export default nextConfig;
