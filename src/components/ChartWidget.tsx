@@ -31,7 +31,7 @@ export default function ChartWidget() {
     const ws = new WebSocket('wss://stream.binance.com:9443/ws/solusdt@kline_1m');
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
-      series.update({ time: msg.k.t / 1000, open: parseFloat(msg.k.o), high: parseFloat(msg.k.h), low: parseFloat(msg.k.l), close: parseFloat(msg.k.c) });
+      series.update({ time: msg.k.t / 1000 as any, open: parseFloat(msg.k.o), high: parseFloat(msg.k.h), low: parseFloat(msg.k.l), close: parseFloat(msg.k.c) });
     };
 
     return () => { ws.close(); chart.remove(); };
